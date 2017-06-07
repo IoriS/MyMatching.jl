@@ -94,7 +94,7 @@ function deferred_acceptance(m_prefs::Vector{Vector{Int}},f_prefs::Vector{Vector
     return prop_matches, resp_matches
 end
 
-function deferred_acceptance(prop_prefs::Matrix{T},resp_prefs::Matrix{T},caps)
+function deferred_acceptance(prop_prefs::Matrix{Int},resp_prefs::Matrix{Int},caps)
 
     m = size(prop_prefs,2)
     n = size(resp_prefs,2)
@@ -145,7 +145,7 @@ function deferred_acceptance(prop_prefs::Matrix{T},resp_prefs::Matrix{T},caps)
     return prop_matches,resp_matches,indptr
 end
 
-function deferred_acceptance(prop_prefs::Matrix{T},resp_prefs::Matrix{T})
+function deferred_acceptance(prop_prefs::Matrix{Int},resp_prefs::Matrix{Int})
     caps = ones(Int, size(resp_prefs, 2))
     prop_matches, resp_matches, indptr =
         deferred_acceptance(prop_prefs, resp_prefs, caps)
