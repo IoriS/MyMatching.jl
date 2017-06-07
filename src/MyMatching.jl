@@ -1,4 +1,4 @@
-Module MyMatching
+module MyMatching
 
 export deferred_acceptance
 
