@@ -2,11 +2,11 @@ module MyMatching
 
 export deferred_acceptance
 
-function deferred_acceptance(m_prefs::Vector{Vector{Int}},f_prefs::Vector{Vector{Int}},caps)
+function deferred_acceptance(m_prefs::Vector{Vector{Int}},f_prefs::Vector{Vector{Int}},caps::{Vector{Int}})
     m = length(m_prefs)
     n = length(f_prefs)
-    prop_prefs = zeros(n+1,m)
-    resp_prefs = zeros(m+1,n)
+    prop_prefs = zeros(Int,n+1,m)
+    resp_prefs = zeros(Int,m+1,n)
     
     for male in 1:m
         num = length(m_prefs[male])
@@ -72,8 +72,8 @@ end
 function deferred_acceptance(m_prefs::Vector{Vector{Int}},f_prefs::Vector{Vector{Int}})
     m = length(m_prefs)
     n = length(f_prefs)
-    prop_prefs = zeros(n+1,m)
-    resp_prefs = zeros(m+1,n)
+    prop_prefs = zeros(Int,n+1,m)
+    resp_prefs = zeros(Int,m+1,n)
     
     for male in 1:m
         num = length(m_prefs[male])
