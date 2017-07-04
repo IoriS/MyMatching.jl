@@ -61,7 +61,7 @@ function deferred_acceptance(prop_prefs::Matrix{Int},resp_prefs::Matrix{Int},cap
     unchanged_counter = 0
     next_m_approach = ones(Int64,m)
     
-    indptr = Array(Int,n+1)
+    indptr = Array{Int}(n+1)
     indptr[1] = 1
     for i in 1:n
         indptr[i+1] = indptr[i] + caps[i]
