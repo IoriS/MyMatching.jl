@@ -67,36 +67,40 @@ function deferred_acceptance(prop_prefs::Matrix{Int},resp_prefs::Matrix{Int},cap
         indptr[i+1] = indptr[i] + caps[i]
     end
     
-    while unchanged_counter < m
-        unchanged_counter = 0
+    min_prefs = zeros(Int64,n)
+    for wm in 1:n
+        min_prefs[wm] = findfirst(resp_prefs[:,wm],0)
+    end
+    
+    while next == 1
         for h in 1:m
+            next = 0
             if prop_matches[h] == 0
                 d = prop_prefs[next_m_approach[h],h]
                 if d == 0
                     prop_matches[h] = 0
-                    unchanged_counter += 1
-                    
                 else
-                    a=resp_matches[indptr[d]:indptr[d+1]-1]
-                    b=zeros(Int64,caps[d])
-                    for i in 1:caps[d]
-                        b[i] = findfirst(resp_prefs[:,d],a[i])
+                    if next != 1
+                        next =1
                     end
-                    c = maximum(b)
+                    c = min_prefs[d]
                     x = findfirst(resp_prefs[:,d],h)
-                    if c > x && x != 0　
+                    if c > x && x != 0
                         prop_matches[h] = d
-                        r = findfirst(a,resp_prefs[c,d])
+                        r = findfirst(resp_matches[indptr[d]:indptr[d+1]-1],resp_prefs[c,d])
                         if resp_matches[indptr[d]-1+r] != 0
                             prop_matches[resp_prefs[c,d]] = 0
                             next_m_approach[resp_prefs[c,d]] += 1
                         end
                         resp_matches[indptr[d]-1+r] = h
-                    else #Žó‚¯“ü‚ê‚È‚¢‚Æ‚«
+                        a=resp_matches[indptr[d]:indptr[d+1]-1]
+                        if contains(==,a,0) == 0
+                            min_prefs[d] = x
+                        end
+                    else
                         next_m_approach[h] += 1
                     end
                 end
-            else unchanged_counter += 1 
             end
         end
     end
