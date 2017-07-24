@@ -52,24 +52,6 @@ function deferred_acceptance(m_prefs::Vector{Vector{Int}},f_prefs::Vector{Vector
 end
 
 function deferred_acceptance(prop_prefs::Matrix{Int},resp_prefs::Matrix{Int},caps)
-    m = length(m_prefs)
-    n = length(f_prefs)
-    prop_prefs = zeros(Int64,n+1,m)
-    resp_prefs = zeros(Int64,m+1,n)
-    
-    for male in 1:m
-        num = length(m_prefs[male])
-        for p in 1:num
-            prop_prefs[p,male] = m_prefs[male][p]
-        end
-    end
-    for fem in 1:n
-        numf = length(f_prefs[fem])
-        for q in 1:numf
-            resp_prefs[q,fem] = f_prefs[fem][q]
-        end
-    end
-
     m = size(prop_prefs,2)
     n = size(resp_prefs,2)
     prop_matches = zeros(Int64,m)
