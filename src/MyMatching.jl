@@ -52,26 +52,47 @@ function deferred_acceptance(m_prefs::Vector{Vector{Int}},f_prefs::Vector{Vector
 end
 
 function deferred_acceptance(prop_prefs::Matrix{Int},resp_prefs::Matrix{Int},caps)
+    m = length(m_prefs)
+    n = length(f_prefs)
+    prop_prefs = zeros(Int64,n+1,m)
+    resp_prefs = zeros(Int64,m+1,n)
+    
+    for male in 1:m
+        num = length(m_prefs[male])
+        for p in 1:num
+            prop_prefs[p,male] = m_prefs[male][p]
+        end
+    end
+    for fem in 1:n
+        numf = length(f_prefs[fem])
+        for q in 1:numf
+            resp_prefs[q,fem] = f_prefs[fem][q]
+        end
+    end
 
     m = size(prop_prefs,2)
     n = size(resp_prefs,2)
     prop_matches = zeros(Int64,m)
     L = sum(caps)
     resp_matches = zeros(Int64,L)
-    unchanged_counter = 0
-    next_m_approach = ones(Int64,m)
-    
-    indptr = Array{Int}(n+1)
+        
+    indptr = Array{Int64}(n+1)
     indptr[1] = 1
     for i in 1:n
         indptr[i+1] = indptr[i] + caps[i]
     end
     
-    min_prefs = zeros(Int64,n)
-    for wm in 1:n
-        min_prefs[wm] = findfirst(resp_prefs[:,wm],0)
+    for fnum in 1:n
+        zeropref = findfirst(resp_prefs[:,fnum],0)
+        for wm in indptr[fnum]:indptr[fnum+1]-1
+            resp_matches[wm] = zeropref
+        end
     end
     
+    next = 1
+    next_m_approach = ones(Int64,m)
+
+
     while next == 1
         for h in 1:m
             next = 0
@@ -83,20 +104,17 @@ function deferred_acceptance(prop_prefs::Matrix{Int},resp_prefs::Matrix{Int},cap
                     if next != 1
                         next =1
                     end
-                    c = min_prefs[d]
+                    a = resp_matches[indptr[d]:indptr[d+1]-1]
+                    c = maximum(a)
                     x = findfirst(resp_prefs[:,d],h)
                     if c > x && x != 0
                         prop_matches[h] = d
-                        r = findfirst(resp_matches[indptr[d]:indptr[d+1]-1],resp_prefs[c,d])
-                        if resp_matches[indptr[d]-1+r] != 0
+                        r = findfirst(a,c)
+                        if resp_matches[indptr[d]-1+r] != findfirst(resp_prefs[:,d],0)
                             prop_matches[resp_prefs[c,d]] = 0
                             next_m_approach[resp_prefs[c,d]] += 1
                         end
-                        resp_matches[indptr[d]-1+r] = h
-                        a=resp_matches[indptr[d]:indptr[d+1]-1]
-                        if contains(==,a,0) == 0
-                            min_prefs[d] = x
-                        end
+                        resp_matches[indptr[d]-1+r] = x
                     else
                         next_m_approach[h] += 1
                     end
@@ -104,6 +122,13 @@ function deferred_acceptance(prop_prefs::Matrix{Int},resp_prefs::Matrix{Int},cap
             end
         end
     end
+    
+    for iss in 1:n
+        for isss in indptr[iss]:indptr[iss+1]-1
+            resp_matches[isss] = resp_prefs[resp_matches[isss],iss]
+        end
+    end
+
     return prop_matches,resp_matches,indptr
 end
 
